@@ -20,8 +20,12 @@ module Toggl
       RUBY
     end
 
-    private
+    def data_only
+      false
+    end
 
+    private
+    
     def basic_path(path)
       path = "/reports/api/#{APIVERSION}#{path}" unless path =~ /reports/
     end

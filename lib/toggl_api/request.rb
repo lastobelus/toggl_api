@@ -6,9 +6,15 @@ module Toggl
     ENDPOINT = "https://www.toggl.com"
 
     attr_writer :user_agent, :connection_options
-
+    attr_reader :logger
+    
     def user_agent
       @user_agent ||= "Toggl Api Ruby Gem #{Toggl::VERSION}"
+    end
+
+    def logger=(state)
+      @connection = nil
+      @logger = state
     end
 
     def connection_options
@@ -48,7 +54,8 @@ module Toggl
 
     def connection
       @connection ||= Faraday.new(ENDPOINT,connection_options) do |faraday|
-        faraday.request :url_encoded  
+        faraday.request :url_encoded
+        faraday.response :logger if logger
         faraday.adapter Faraday.default_adapter
         faraday.basic_auth @username, @pass
       end 
@@ -57,7 +64,7 @@ module Toggl
     def handle_response(response)
       raise_errors(response)
       data = mash(MultiJson.load(response.body))
-      (data.is_a?(Hash) && data.key?('data')) ? data['data'] : data
+      (data_only && data.is_a?(Hash) && data.key?('data')) ? data['data'] : data
     end
 
     def raise_errors(response)

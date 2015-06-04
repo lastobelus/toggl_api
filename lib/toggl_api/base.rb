@@ -29,6 +29,10 @@ module Toggl
       @username,@pass = username,pass
     end
 
+    def data_only
+      false
+    end
+
     private 
 
     def basic_path(path)
