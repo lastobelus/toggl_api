@@ -48,8 +48,6 @@ module Toggl
     
     def request(method, path, params={})
       handle_response connection.send(method.to_sym, basic_path(path), params)
-    rescue Faraday::Error::ClientError
-      raise TogglApi::Error
     end
 
     def connection
